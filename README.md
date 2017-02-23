@@ -1,6 +1,8 @@
 # rlcourse-february-17-zhuoyu
 rlcourse-february-17-zhuoyu created by GitHub Classroom
 
+## Comparing n-step Q(sigma) with other n-step methods
+
 In this exercise, I implement the SARSA(0), n-step SARSA, n-step Expected SARSA, n-step tree backup and n-step Q(sigma) on a grid game.
 # The Environment
 
