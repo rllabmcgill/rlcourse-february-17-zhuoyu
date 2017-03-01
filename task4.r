@@ -851,8 +851,8 @@ for (i in 1:50) {
 
 
 
-saveRDS(num_episode, "num_episode_n8_a0.25.rds")
-saveRDS(totalrewards, "totalrewards_n8_a0.25.rds")
+saveRDS(num_episode, "num_episode_n8_a0.5.rds")
+saveRDS(totalrewards, "totalrewards_n8_a0.5.rds")
 
 num_episodeC <- NULL
 totalrewardsC <- NULL
@@ -902,13 +902,43 @@ totalrewardsC <- cbind(totalrewardsC, apply(totalrewards_n8_a0.5, c(2,3), mean, 
 
 
 N <- rep(rep(c(2,4,6,8),each=5),2)
-a <- rep(c(0.25，5),each=5*4)
+a <- rep(c(0.25，0.5),each=5*4)
 method <- rep(c("sarsa0", "sarsan", "exp_sarsan", "treeBackupn", "Q_sigma"), 8)
 df1 <- data.frame(N=N, a=a, method=method, num_episode=num_episodeC)
 
+library(ggplot2)
+df11 <- df1[df1$a==0.25, ]
+ggplot(data = df1, aes(x = N, y = num_episode, group = method , colour = method)) +       
+   geom_line() + geom_point() + facet_grid( ~a ) +
+  xlab("N") +
+  ylab("Number of episodes") +
+  ggtitle("The number of episodes")
 
+df12 <- df1[df1$a==0.5, ]
+ggplot(data = df12, aes(x = N, y = num_episode, group = method , colour = method)) +       
+   geom_line() + geom_point() +
+  xlab("N") +
+  ylab("Number of episodes") +
+  ggtitle("The number of episodes when alpha=0.5")
+  
+  
 N <- rep(rep(rep(c(2,4,6,8),each=500),2),5)
-a <- rep(rep(c(0.25，5),each=500*4),5)
-method <- rep(c("sarsa0", "sarsan", "exp_sarsan", "treeBackupn", "Q_sigma"), 8*500)
+timesteps <- rep(1:500, 4*2*5)
+a <- rep(rep(c(0.25，0.5),each=500*4),5)
+method <- rep(c("sarsa0", "sarsan", "exp_sarsan", "treeBackupn", "Q_sigma"), each=8*500)
 totalrewards1 <- as.vector(t(totalrewardsC))
-df2 <- data.frame(N=N, a=a, method=method, totalrewards1=totalrewards1)
+df2 <- data.frame(N=N, a=a, method=method, totalrewards1=totalrewards1, timesteps=timesteps)
+
+df3 <- df2[df2$timesteps<=25& df2$a==0.25,]
+ggplot(data = df3, aes(x = timesteps, y = totalrewards1, group = method , colour = method)) +       
+   geom_point() + geom_smooth() + facet_grid(N ~a ) +
+  xlab("Time step") +
+  ylab("Returns") +
+  ggtitle("The returns of each time step when alpha=0.25")
+
+ df4 <- df2[df2$timesteps<=25,]
+ggplot(data = df4, aes(x = timesteps, y = totalrewards1, group = method , colour = method)) +       
+   geom_point() + geom_smooth(se = TRUE) + facet_grid(N ~a ) +
+  xlab("Time step") +
+  ylab("Returns") +
+  ggtitle("The average returns of each time step in an episode")
